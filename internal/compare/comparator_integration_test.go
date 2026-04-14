@@ -56,3 +56,26 @@ func TestCompareIntegration_PerfectMatch(t *testing.T) {
 		t.Errorf("expected perfect match, got %+v", r)
 	}
 }
+
+func TestCompareIntegration_EmptyTarget(t *testing.T) {
+	tmplPath := writeTempEnv(t, "HOST=localhost\nPORT=8080\n")
+	targetPath := writeTempEnv(t, "")
+
+	tmpl, err := envfile.Parse(tmplPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	target, err := envfile.Parse(targetPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	r := compare.Against(tmpl, target)
+
+	if len(r.Missing) != 2 {
+		t.Errorf("expected 2 missing keys, got %v", r.Missing)
+	}
+	if len(r.Extra) != 0 {
+		t.Errorf("expected no extra keys, got %v", r.Extra)
+	}
+}
