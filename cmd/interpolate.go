@@ -35,9 +35,7 @@ within values, printing the fully interpolated environment.`,
 			}
 
 			if outputJSON {
-				enc := json.NewEncoder(os.Stdout)
-				enc.SetIndent("", "  ")
-				return enc.Encode(res.Env)
+				return writeJSON(res.Env)
 			}
 
 			for k, v := range res.Env {
@@ -49,4 +47,14 @@ within values, printing the fully interpolated environment.`,
 
 	interpolateCmd.Flags().BoolVar(&outputJSON, "json", false, "Output result as JSON")
 	rootCmd.AddCommand(interpolateCmd)
+}
+
+// writeJSON encodes the given value as indented JSON to stdout.
+func writeJSON(v any) error {
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(v); err != nil {
+		return fmt.Errorf("encoding JSON output: %w", err)
+	}
+	return nil
 }
