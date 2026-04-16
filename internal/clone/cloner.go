@@ -62,6 +62,14 @@ func Clone(src map[string]string, destPath string, opts Options) (Result, error)
 	return result, nil
 }
 
+// Summary returns a human-readable description of the clone result.
+func (r Result) Summary() string {
+	if r.Masked > 0 {
+		return fmt.Sprintf("cloned %d keys to %s (%d masked)", r.Written, r.DestPath, r.Masked)
+	}
+	return fmt.Sprintf("cloned %d keys to %s", r.Written, r.DestPath)
+}
+
 func sortedKeys(m map[string]string) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
