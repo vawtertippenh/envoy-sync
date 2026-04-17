@@ -38,22 +38,26 @@ var syncCmd = &cobra.Command{
 			return fmt.Errorf("syncing: %w", err)
 		}
 
-		if len(result.Added) == 0 && len(result.Updated) == 0 {
-			fmt.Println("Nothing to sync — destination is already up to date.")
-			return nil
-		}
-
-		for _, k := range result.Added {
-			fmt.Printf("  + added:   %s\n", k)
-		}
-		for _, k := range result.Updated {
-			fmt.Printf("  ~ updated: %s\n", k)
-		}
-		fmt.Printf("\nSync complete: %d added, %d updated, %d skipped.\n",
-			len(result.Added), len(result.Updated), len(result.Skipped))
-
+		printSyncResult(result)
 		return nil
 	},
+}
+
+// printSyncResult prints a human-readable summary of the sync operation to stdout.
+func printSyncResult(result *envsync.Result) {
+	if len(result.Added) == 0 && len(result.Updated) == 0 {
+		fmt.Println("Nothing to sync — destination is already up to date.")
+		return
+	}
+
+	for _, k := range result.Added {
+		fmt.Printf("  + added:   %s\n", k)
+	}
+	for _, k := range result.Updated {
+		fmt.Printf("  ~ updated: %s\n", k)
+	}
+	fmt.Printf("\nSync complete: %d added, %d updated, %d skipped.\n",
+		len(result.Added), len(result.Updated), len(result.Skipped))
 }
 
 func init() {
