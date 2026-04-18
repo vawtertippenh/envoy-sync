@@ -78,6 +78,26 @@ func TestTag_Untagged_NoDefault(t *testing.T) {
 	}
 }
 
+func TestTag_MultiplePatterns_SameTag(t *testing.T) {
+	opts := Options{
+		Tags: map[string][]string{
+			"infra": {"DB_*", "APP_*"},
+		},
+	}
+	results := Tag(baseEnv(), opts)
+	tagMap := map[string]string{}
+	for _, r := range results {
+		if len(r.Tags) > 0 {
+			tagMap[r.EnvKey] = r.Tags[0].Key
+		}
+	}
+	for _, key := range []string{"DB_HOST", "DB_PASSWORD", "APP_NAME", "APP_PORT"} {
+		if tagMap[key] != "infra" {
+			t.Errorf("expected %s -> infra, got %s", key, tagMap[key])
+		}
+	}
+}
+
 func TestRender_Output(t *testing.T) {
 	results := []Result{
 		{EnvKey: "DB_HOST", Tags: []Tag{{Key: "database"}}},
