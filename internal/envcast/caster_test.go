@@ -84,3 +84,10 @@ func TestCast_ResultsAreSorted(t *testing.T) {
 		t.Fatalf("expected sorted results, got %v %v %v", results[0].Key, results[1].Key, results[2].Key)
 	}
 }
+
+func TestCast_EmptyEnv(t *testing.T) {
+	results := Cast(map[string]string{}, Options{})
+	if len(results) != 0 {
+		t.Fatalf("expected empty results for empty env, got %+v", results)
+	}
+}
