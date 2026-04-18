@@ -93,3 +93,20 @@ func TestClone_SortedOutput(t *testing.T) {
 		t.Errorf("expected sorted output, got: %v", lines)
 	}
 }
+
+func TestClone_EmptySource(t *testing.T) {
+	dest := tempDest(t)
+
+	res, err := clone.Clone(map[string]string{}, dest, clone.Options{})
+	if err != nil {
+		t.Fatalf("unexpected error for empty source: %v", err)
+	}
+	if res.Written != 0 {
+		t.Errorf("expected 0 written for empty source, got %d", res.Written)
+	}
+
+	data, _ := os.ReadFile(dest)
+	if strings.TrimSpace(string(data)) != "" {
+		t.Errorf("expected empty output file for empty source")
+	}
+}
