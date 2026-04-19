@@ -50,6 +50,13 @@ func TestDecrypt_MissingPrefix(t *testing.T) {
 	}
 }
 
+func TestDecrypt_EmptyString(t *testing.T) {
+	_, err := encrypt.Decrypt("", testPassphrase)
+	if err == nil {
+		t.Error("expected error when decrypting empty string")
+	}
+}
+
 func TestIsEncrypted(t *testing.T) {
 	enc, _ := encrypt.Encrypt("hello", testPassphrase)
 	if !encrypt.IsEncrypted(enc) {
