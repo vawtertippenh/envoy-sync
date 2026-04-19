@@ -64,6 +64,16 @@ func TestLint_UnresolvedPlaceholderWarning(t *testing.T) {
 	}
 }
 
+func TestLint_EmptyEnv(t *testing.T) {
+	result := Lint(map[string]string{})
+	if len(result.Issues) != 0 {
+		t.Errorf("expected no issues for empty env, got %d: %v", len(result.Issues), result.Issues)
+	}
+	if result.HasErrors() {
+		t.Error("expected HasErrors to be false for empty env")
+	}
+}
+
 func TestSummary_NoIssues(t *testing.T) {
 	r := Result{}
 	if r.Summary() != "No lint issues found." {
