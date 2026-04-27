@@ -1,6 +1,7 @@
 package dedupe_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/yourorg/envoy-sync/internal/dedupe"
@@ -87,14 +88,21 @@ func TestSummary_WithDuplicates(t *testing.T) {
 	}
 }
 
+// TestDedupe_ValueWithEquals ensures that values containing '=' are preserved correctly.
+func TestDedupe_ValueWithEquals(t *testing.T) {
+	input := lines("TOKEN=abc=def=ghi", "OTHER=plain")
+	res := dedupe.Dedupe(input, false)
+	if len(res.Duplicates) != 0 {
+		t.Fatalf("unexpected duplicates: %v", res.Duplicates)
+	}
+	if res.Env["TOKEN"] != "abc=def=ghi" {
+		t.Fatalf("expected value with equals signs to be preserved, got %q", res.Env["TOKEN"])
+	}
+	if res.Env["OTHER"] != "plain" {
+		t.Fatalf("unexpected value for OTHER: %q", res.Env["OTHER"])
+	}
+}
+
 func contains(s, sub string) bool {
-	return len(s) >= len(sub) && (s == sub || len(sub) == 0 ||
-		(func() bool {
-			for i := 0; i <= len(s)-len(sub); i++ {
-				if s[i:i+len(sub)] == sub {
-					return true
-				}
-			}
-			return false
-		})())
+	return strings.Contains(s, sub)
 }
